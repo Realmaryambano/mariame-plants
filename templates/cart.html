@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Shopping Cart - Mariamé Plants{% endblock %}
+
+{% block content %}
+<div class="cart-container-page">
+    <div class="cart-header-title">
+        <h1>Your Shopping Cart</h1>
+        <p>Review selected plant items, adjust quantities, or proceed to checkout.</p>
+        
+    </div>
+
+    {% if cart %}
+    <div class="cart-layout-grid">
+        <!-- Cart Items List -->
+        <div class="cart-items-box">
+            <table class="cart-table">
+                <thead>
+                    <tr>
+                        <th>Specimen / Product</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in cart %}
+                    <tr>
+                        <td>
+                            <div class="cart-product-info">
+                                <div class="cart-img-box">
+                                    <i class="fa-solid fa-seedling"></i>
+                                </div>
+                                <div>
+                                    <strong>{{ item.product.name }}</strong>
+                                    <span>{{ item.product.category | capitalize }}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>PKR {{ item.product.price }}</td>
+                        <td>
+                            <div class="qty-controller">
+                                <form action="{{ url_for('update_cart', product_id=item.product.id, action='decrease') }}" method="POST" style="display:inline;">
+                                    <button type="submit" class="qty-btn">-</button>
+                                </form>
+                                <span class="qty-display">{{ item.quantity }}</span>
+                                <form action="{{ url_for('update_cart', product_id=item.product.id, action='increase') }}" method="POST" style="display:inline;">
+                                    <button type="submit" class="qty-btn">+</button>
+                                </form>
+                            </div>
+                        </td>
+                        <td><strong>PKR {{ item.subtotal }}</strong></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+            <div class="cart-actions-row">
+                <a href="{{ url_for('clear_cart') }}" class="btn-clear-cart">Clear Cart</a>
+                <a href="{{ url_for('shop') }}" class="btn-secondary-shop">Continue Shopping</a>
+            </div>
+        </div>
+
+        <!-- Cart Summary Box -->
+        <div class="cart-summary-box">
+            <h3>Order Summary</h3>
+            <div class="summary-line">
+                <span>Subtotal</span>
+                <span>PKR {{ total }}</span>
+            </div>
+            <div class="summary-line">
+                <span>Delivery (Pakistan)</span>
+                <span>Calculated at Checkout</span>
+            </div>
+            <hr class="summary-divider">
+            <div class="summary-line total-row">
+                <span>Total Amount</span>
+                <span>PKR {{ total }}</span>
+            </div>
+<a href="{{ url_for('checkout') }}" class="btn-main" style="display: block; text-align: center; text-decoration: none; width: 100%; margin-top: 20px;">Proceed to Checkout</a>        </div>
+    </div>
+    {% else %}
+    <div class="empty-cart-state">
+        <i class="fa-solid fa-bag-shopping"></i>
+        <h3>Your cart is currently empty.</h3>
+        <p>Explore our international selection of plants, rich aroid soils, and designer pots.</p>
+        <a href="{{ url_for('shop') }}" class="btn-main">Explore Collection</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
