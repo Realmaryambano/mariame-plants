@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Checkout - Mariamé Plants{% endblock %}
+
+{% block content %}
+<div class="checkout-page">
+    <div class="checkout-card">
+        <h2>Secure Order Checkout</h2>
+        <p class="section-sub">Finalize delivery details for your selected plant ecosystem.</p>
+
+        <div class="summary-box">
+            <h4>Order Summary</h4>
+            {% for item in cart_items %}
+            <div class="summary-line" style="margin-bottom: 6px;">
+                <span>{{ item.product.name }} (x{{ item.quantity }})</span>
+                <strong>PKR {{ item.subtotal }}</strong>
+            </div>
+            {% endfor %}
+            <div class="summary-line" style="margin-top: 6px;">
+                <span>Delivery Charges</span>
+                <strong>PKR {{ delivery_fee }}</strong>
+            </div>
+            <div style="border-top: 1px solid var(--border-color); margin-top: 10px; padding-top: 8px; display: flex; justify-content: space-between;">
+                <strong>Total Amount</strong>
+                <strong class="green-text">PKR {{ total_price }}</strong>
+            </div>
+        </div>
+
+        <form method="POST" class="standard-form">
+            <div class="form-field">
+                <label>Full Name</label>
+                <input type="text" name="name" required placeholder="Enter your full name">
+            </div>
+            <div class="form-field">
+                <label>Phone Number (Pakistan)</label>
+                <input type="text" name="phone" required placeholder="0300 1234567">
+            </div>
+            <div class="form-field">
+                <label>Select City</label>
+                <select name="city" required>
+                    <option value="">Choose City</option>
+                    <option value="Karachi">Karachi</option>
+                    <option value="Lahore">Lahore</option>
+                    <option value="Islamabad">Islamabad</option>
+                    <option value="Rawalpindi">Rawalpindi</option>
+                    <option value="Faisalabad">Faisalabad</option>
+                    <option value="Peshawar">Peshawar</option>
+                    <option value="Quetta">Quetta</option>
+                    <option value="Other">Other Cities in Pakistan</option>
+                </select>
+            </div>
+            <div class="form-field">
+                <label>Soil Weight Package (If applicable)</label>
+                <select name="soil_weight">
+                    <option value="Standard Package">Standard Plant Pot / Pack</option>
+                    <option value="1 KG Mix">1 KG Organic Soil Mix</option>
+                    <option value="3 KG Mix">3 KG Organic Soil Mix</option>
+                    <option value="5 KG Mix">5 KG Organic Soil Mix</option>
+                </select>
+            </div>
+            <div class="form-field">
+                <label>Complete Street Address</label>
+                <textarea name="address" rows="3" required placeholder="House number, street name, area"></textarea>
+            </div>
+
+            <button type="submit" class="btn-main full-width">Place Order & Generate Invoice</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
