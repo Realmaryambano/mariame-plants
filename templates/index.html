@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% block title %}Mariamé Plants Ecosystem - International Grade Flora{% endblock %}
+
+{% block content %}
+<!-- Animated Hero Slider Section -->
+<section class="hero-slider-section">
+    <div class="hero-slides-container">
+        <!-- Slide 1 -->
+        <div class="hero-slide active" style="background-image: linear-gradient(rgba(17, 28, 19, 0.65), rgba(17, 28, 19, 0.65)), url('https://images.unsplash.com/photo-1485955900006-10f4d324d411?auto=format&fit=crop&w=1600&q=80');">
+            <div class="hero-slide-content">
+                <span class="badge-tag">Global Botanical Standards</span>
+                <h1>Nurturing Living Ecosystems in Every Home</h1>
+                <p>Discover hand-selected tropical plants, bespoke artisanal pottery, and nutrient-dense organic soils engineered for optimal vitality.</p>
+                <div class="hero-cta-group">
+                    <a href="{{ url_for('shop') }}" class="btn-main">Explore Plant Catalog</a>
+                    <a href="{{ url_for('about') }}" class="btn-outline" style="color: #fff; border-color: rgba(255,255,255,0.4);">Our Heritage</a>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 2 -->
+        <div class="hero-slide" style="background-image: linear-gradient(rgba(17, 28, 19, 0.65), rgba(17, 28, 19, 0.65)), url('https://images.unsplash.com/photo-1545241047-6083a3684587?auto=format&fit=crop&w=1600&q=80');">
+            <div class="hero-slide-content">
+                <span class="badge-tag">Artisan & Sustainable</span>
+                <h1>Crafted Planters & Bio-Active Soil Mixtures</h1>
+                <p>Elevate your indoor spaces with climate-adapted greenery managed directly under the expertise of founder Maryam Bano.</p>
+                <div class="hero-cta-group">
+                    <a href="{{ url_for('shop', category='soil') }}" class="btn-main">Shop Soil & Pots</a>
+                    <a href="{{ url_for('contact') }}" class="btn-outline" style="color: #fff; border-color: rgba(255,255,255,0.4);">Consultation</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Slider Navigation Dots -->
+    <div class="slider-dots">
+        <span class="dot active" onclick="currentSlide(0)"></span>
+        <span class="dot" onclick="currentSlide(1)"></span>
+    </div>
+</section>
+
+<!-- Why Choose Us Section -->
+<section class="why-choose-section">
+    <div class="container-inner">
+        <div class="section-title-center">
+            <h2>Why Connoisseurs Choose Mariamé</h2>
+            <p class="section-sub">We bridge international horticultural excellence with local ecological care across Pakistan.</p>
+        </div>
+        <div class="why-grid">
+            <div class="why-card">
+                <i class="fa-solid fa-leaf"></i>
+                <h3>100% Acclimatized Flora</h3>
+                <p>Every specimen is rigorously nurtured to adapt smoothly to regional indoor microclimates and weather dynamics.</p>
+            </div>
+            <div class="why-card">
+                <i class="fa-solid fa-flask"></i>
+                <h3>Proprietary Organic Soil</h3>
+                <p>Custom-blended compost and loam matrices engineered by plant scientists to guarantee root aeration and moisture retention.</p>
+            </div>
+            <div class="why-card">
+                <i class="fa-solid fa-shield-heart"></i>
+                <h3>Expert Lifelong Guidance</h3>
+                <p>Direct access to professional botanical consultations with Maryam Bano to ensure your indoor ecosystem thrives indefinitely.</p>
+            </div>
+            <div class="why-card">
+                <i class="fa-solid fa-truck-fast"></i>
+                <h3>Secure Eco-Packaging</h3>
+                <p>Specialized shock-resistant transport containers ensuring safe delivery to Karachi, Lahore, Islamabad, and beyond.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Catalog Section -->
+<section class="featured-categories" style="padding-top: 0;">
+    <div class="section-title-center">
+        <h2>Featured Living Masterpieces</h2>
+        <p class="section-sub">A small preview of our exclusive nursery stock available for immediate acquisition.</p>
+    </div>
+    <div class="product-grid">
+        {% for p in products %}
+        <div class="product-card">
+            <div class="product-card-top">
+                <span class="item-badge">{{ p.badge }}</span>
+                <i class="fa-solid fa-seedling"></i>
+            </div>
+            <div class="product-card-body">
+                <span class="cat-tag">{{ p.category }}</span>
+                <h3>{{ p.name }}</h3>
+                <p class="item-desc">{{ p.desc }}</p>
+                <div class="rating-row">
+                    <i class="fa-solid fa-star"></i> <span>{{ p.rating }}</span>
+                </div>
+                <div class="card-footer-row">
+                    <span class="price-val">PKR {{ p.price }}</span>
+                    <form action="{{ url_for('add_to_cart', product_id=p.id) }}" method="POST">
+                        <button type="submit" class="btn-buy">Add to Cart</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Hero Slider Script -->
+<script>
+    let slideIndex = 0;
+    const slides = document.querySelectorAll('.hero-slide');
+    const dots = document.querySelectorAll('.dot');
+
+    function showSlides() {
+        slides.forEach(slide => slide.classList.remove('active'));
+        dots.forEach(dot => dot.classList.remove('active'));
+        
+        slideIndex++;
+        if (slideIndex > slides.length) { slideIndex = 1; }
+        
+        slides[slideIndex - 1].classList.add('active');
+        dots[slideIndex - 1].classList.add('active');
+        
+        setTimeout(showSlides, 6000); // Change slide every 6 seconds
+    }
+
+    function currentSlide(n) {
+        slideIndex = n;
+        slides.forEach(slide => slide.classList.remove('active'));
+        dots.forEach(dot => dot.classList.remove('active'));
+        
+        slides[slideIndex].classList.add('active');
+        dots[slideIndex].classList.add('active');
+    }
+
+    // Initialize auto-sliding
+    setTimeout(showSlides, 6000);
+</script>
+{% endblock %}
