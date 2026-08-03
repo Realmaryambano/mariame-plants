@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Contact Us - Mariamé Plants{% endblock %}
+
+{% block content %}
+<div class="contact-hero">
+    <div class="contact-hero-overlay">
+        <h1>Get in Touch</h1>
+        <p>Have questions about plant selection or custom soil mixes? Reach out directly to Maryam Bano.</p>
+    </div>
+</div>
+
+<div class="contact-container">
+    <div class="contact-grid">
+        <!-- Contact Info Column -->
+        <div class="contact-info-card">
+            <h3>Botanical Atelier Contact</h3>
+            <p class="contact-intro">We are here to help you build and maintain a thriving green ecosystem in your home or office space.</p>
+            
+            <ul class="contact-details-list">
+                <li>
+                    <i class="fa-solid fa-envelope"></i>
+                    <div>
+                        <span>Email Us</span>
+                        <strong>care@mariameplants.com</strong>
+                    </div>
+                </li>
+                <li>
+                    <i class="fa-solid fa-phone"></i>
+                    <div>
+                        <span>Phone / WhatsApp</span>
+                        <strong>+92 300 1234567</strong>
+                    </div>
+                </li>
+                <li>
+                    <i class="fa-solid fa-location-dot"></i>
+                    <div>
+                        <span>Service Scope</span>
+                        <strong>Nationwide Delivery across Pakistan</strong>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Contact Form Column -->
+        <div class="contact-form-card">
+            <h3>Send a Message</h3>
+            <form action="{{ url_for('contact') }}" method="POST">
+                <div class="form-group">
+                    <label for="name">Your Name</label>
+                    <input type="text" id="name" name="name" placeholder="Enter full name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Your Email</label>
+                    <input type="email" id="email" name="email" placeholder="name@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">Message</label>
+                    <textarea id="message" name="message" rows="5" placeholder="How can we assist you?" required></textarea>
+                </div>
+                <button type="submit" class="btn-main" style="width: 100%;">Send Message</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
