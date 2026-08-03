@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Mariamé Plants Ecosystem{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Google Fonts & FontAwesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body data-theme="light">
+
+    <!-- Header Navigation -->
+ <!-- Header Navigation -->
+    <header class="site-header">
+        <div class="nav-container">
+            <!-- Brand Logo -->
+            <a href="{{ url_for('home') }}" class="logo">Mariamé <span>Plants</span></a>
+            
+            <!-- Centralized Navigation Links -->
+            <nav class="nav-links">
+                <a href="{{ url_for('home') }}" {% if request.endpoint == 'home' %}class="active"{% endif %}>Home</a>
+                <a href="{{ url_for('shop') }}" {% if request.endpoint == 'shop' %}class="active"{% endif %}>Collection</a>
+                <a href="{{ url_for('about') }}" {% if request.endpoint == 'about' %}class="active"{% endif %}>About Us</a>
+                <a href="{{ url_for('contact') }}" {% if request.endpoint == 'contact' %}class="active"{% endif %}>Contact</a>
+            </nav>
+
+            <!-- Actions (Cart & Theme Toggle) -->
+            <div class="nav-actions">
+                <a href="{{ url_for('cart') }}" class="cart-btn-link" title="View Cart">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                    {% if cart_count and cart_count > 0 %}
+                    <span class="cart-badge">{{ cart_count }}</span>
+                    {% endif %}
+                </a>
+                <button id="theme-toggle" aria-label="Toggle Color Theme">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Flash Alerts -->
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="flash-wrapper">
+          {% for message in messages %}
+            <div class="flash-alert">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <!-- Main Content Block -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-grid">
+            <div class="footer-col">
+                <h3>Mariamé Plants</h3>
+                <p>Curating international botanical standards, professional plant care consultations, and specialized bio-active soils across Pakistan.</p>
+            </div>
+            <div class="footer-col">
+                <h3>Quick Navigation</h3>
+                <a href="{{ url_for('shop') }}">Plant Catalog</a>
+                <a href="{{ url_for('shop', category='soil') }}">Organic Substrates</a>
+                <a href="{{ url_for('about') }}">Founder Heritage</a>
+                <a href="{{ url_for('contact') }}">Book Consultation</a>
+            </div>
+            <div class="footer-col">
+                <h3>Contact Atelier</h3>
+                <p>Email: care@mariameplants.com</p>
+                <p>Phone: +92 300 1234567</p>
+                <p>Location: Lahore & Karachi, Pakistan</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Mariamé Plants Ecosystem. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Persistent Theme Engine Script -->
+    <script>
+        const toggleBtn = document.getElementById('theme-toggle');
+        const bodyEl = document.body;
+        
+        // Retrieve and apply saved theme preference instantly
+        const savedTheme = localStorage.getItem('mariame_theme');
+        if (savedTheme) {
+            bodyEl.setAttribute('data-theme', savedTheme);
+            if (savedTheme === 'dark') {
+                toggleBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
+            } else {
+                toggleBtn.innerHTML = '<i class="fa-solid fa-moon"></i>';
+            }
+        }
+
+        // Toggle theme state on click and persist user choice
+        toggleBtn.addEventListener('click', () => {
+            if (bodyEl.getAttribute('data-theme') === 'light') {
+                bodyEl.setAttribute('data-theme', 'dark');
+                toggleBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
+                localStorage.setItem('mariame_theme', 'dark');
+            } else {
+                bodyEl.setAttribute('data-theme', 'light');
+                toggleBtn.innerHTML = '<i class="fa-solid fa-moon"></i>';
+                localStorage.setItem('mariame_theme', 'light');
+            }
+        });
+    </script>
+</body>
+</html>
