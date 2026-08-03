@@ -49,72 +49,86 @@ PRODUCTS = [
     {
         "id": 2, "name": "Fiddle Leaf Fig (Ficus lyrata)", "category": "indoor", 
         "badge": "Trending", "price": 6800, "rating": 4.8, 
-        "desc": "Architectural statement plant with broad, violin-shaped glossy dark green leaves."
+        "desc": "Architectural statement plant with broad, violin-shaped glossy dark green leaves.",
+        "image": "fiddle.png"
     },
     {
         "id": 3, "name": "Snake Plant Laurentii", "category": "indoor", 
         "badge": "Hardy", "price": 2800, "rating": 4.7, 
-        "desc": "Nearly indestructible air-purifying plant featuring striking yellow-bordered stiff leaves."
+        "desc": "Nearly indestructible air-purifying plant featuring striking yellow-bordered stiff leaves.",
+        "image": "snake.png"
     },
     {
         "id": 4, "name": "ZZ Plant (Zamioculcas zamiifolia)", "category": "indoor", 
         "badge": "Low Light", "price": 3200, "rating": 4.9, 
-        "desc": "Glossy, emerald-green stems that thrive gracefully in dimly lit office or room spaces."
+        "desc": "Glossy, emerald-green stems that thrive gracefully in dimly lit office or room spaces.",
+        "image": "zz_plant.png"
     },
     {
         "id": 5, "name": "Peace Lily (Spathiphyllum)", "category": "indoor", 
         "badge": "Air Purifier", "price": 2500, "rating": 4.6, 
-        "desc": "Elegant dark foliage paired with striking white spathe blooms that clean indoor air."
+        "desc": "Elegant dark foliage paired with striking white spathe blooms that clean indoor air.",
+        "image": "peace-lily.png"   
     },
     {
         "id": 6, "name": "Areca Palm (Dypsis lutescens)", "category": "outdoor", 
         "badge": "Tropical", "price": 5200, "rating": 4.8, 
-        "desc": "Feathery, graceful fronds that introduce an instant resort-like ambiance to patios."
+        "desc": "Feathery, graceful fronds that introduce an instant resort-like ambiance to patios.",
+        "image": "areca-palm.png"
     },
     {
         "id": 7, "name": "Bougainvillea Bonsai Specimen", "category": "outdoor", 
         "badge": "Vibrant", "price": 4100, "rating": 4.7, 
-        "desc": "Sun-loving outdoor flowering shrub featuring vibrant magenta bracts and strong woody trunk."
+        "desc": "Sun-loving outdoor flowering shrub featuring vibrant magenta bracts and strong woody trunk.",
+        "image": "bougainvillea.png"
     },
     {
         "id": 8, "name": "Sago Palm (Cycas revoluta)", "category": "outdoor", 
         "badge": "Classic", "price": 7500, "rating": 4.9, 
-        "desc": "Stately architectural cycad with stiff, dark green glossy fronds resistant to heat."
+        "desc": "Stately architectural cycad with stiff, dark green glossy fronds resistant to heat.",
+        "image": "sago-palm.png"
     },
     {
         "id": 9, "name": "Jasmine (Jasminum sambac)", "category": "outdoor", 
         "badge": "Fragrant", "price": 1800, "rating": 4.8, 
-        "desc": "Beloved traditional climber producing intensely sweet nocturnal aromatic white blossoms."
+        "desc": "Beloved traditional climber producing intensely sweet nocturnal aromatic white blossoms.",
+        "image": "jasmine.png"
     },
     {
         "id": 10, "name": "Hibiscus Rosa-Sinensis", "category": "outdoor", 
         "badge": "Exotic", "price": 2200, "rating": 4.5, 
-        "desc": "Dazzling tropical blooms with deep red ruffled petals that thrive under full sunlight."
+        "desc": "Dazzling tropical blooms with deep red ruffled petals that thrive under full sunlight.",
+        "image": "Hibiscus Rosa-Sinensis.png"
     },
     {
         "id": 11, "name": "Golden Barrel Cactus", "category": "cactus", 
         "badge": "Popular", "price": 3000, "rating": 4.7, 
-        "desc": "Symmetrical globe-shaped succulent cactus adorned with striking golden-yellow spines."
+        "desc": "Symmetrical globe-shaped succulent cactus adorned with striking golden-yellow spines.",
+        "image": "Golden Barrel Cactus.png"
     },
     {
         "id": 12, "name": "Echeveria Elegans Rosette", "category": "cactus", 
         "badge": "Cute", "price": 1200, "rating": 4.8, 
-        "desc": "Tightly formed succulent rosettes displaying pale blue-green fleshy leaves."
+        "desc": "Tightly formed succulent rosettes displaying pale blue-green fleshy leaves.",
+        "image": "Echeveria Elegans Rosette.png"
     },
     {
         "id": 13, "name": "Aloe Vera Medicinal", "category": "cactus", 
         "badge": "Useful", "price": 1500, "rating": 4.9, 
-        "desc": "Functional succulent with thick gel-filled leaves famous for soothing skin care properties."
+        "desc": "Functional succulent with thick gel-filled leaves famous for soothing skin care properties.",
+        "image": "Aloe Vera Medicinal.png"
     },
     {
         "id": 14, "name": "Haworthia Zebra Succulent", "category": "cactus", 
         "badge": "Mini", "price": 1100, "rating": 4.6, 
-        "desc": "Compact dark green succulent featuring distinct horizontal white bumpy zebra stripes."
+        "desc": "Compact dark green succulent featuring distinct horizontal white bumpy zebra stripes.",
+        "image": "Haworthia Zebra Succulent.png"
     },
     {
         "id": 15, "name": "Pachycereus Candelabra Cactus", "category": "cactus", 
         "badge": "Statement", "price": 5500, "rating": 4.9, 
-        "desc": "Tall branching architectural desert column specimen for high-end interior styling."
+        "desc": "Tall branching architectural desert column specimen for high-end interior styling.",
+        "image": "Pachycereus Candelabra Cactus.png"
     },
     {
         "id": 16, "name": "Ficus Retusa Bonsai", "category": "bonsai", 
