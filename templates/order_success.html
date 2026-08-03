@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Order Success - Mariamé Plants{% endblock %}
+
+{% block content %}
+<div class="checkout-page">
+    <div class="checkout-card" style="text-align: center;">
+        <i class="fa-solid fa-circle-check" style="font-size: 48px; color: var(--accent-green); margin-bottom: 16px;"></i>
+        <h2>Order Placed Successfully!</h2>
+        <p class="section-sub">Thank you, <strong>{{ order.name }}</strong>. Your botanical ecosystem order has been registered.</p>
+
+        <div class="summary-box" style="text-align: left;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h4 style="margin: 0;">Order Details & Invoice</h4>
+                <a href="{{ url_for('download_invoice_pdf') }}" class="btn-main" style="font-size: 11px; padding: 6px 12px; text-decoration: none;">
+                    <i class="fa-solid fa-file-pdf"></i> Download PDF
+                </a>
+            </div>
+            <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.5;">
+                <strong>Phone:</strong> {{ order.phone }}<br>
+                <strong>City:</strong> {{ order.city }}<br>
+                <strong>Address:</strong> {{ order.address }}<br>
+                <strong>Package Preference:</strong> {{ order.soil_weight }}
+            </p>
+            <hr class="summary-divider">
+            <h4 style="margin-top: 12px; margin-bottom: 8px;">Items Ordered</h4>
+            
+            {% if order.items %}
+                {% for item in order.items %}
+                <div class="summary-line" style="margin-bottom: 6px;">
+                    <span>{{ item.product_name }} (x{{ item.quantity }})</span>
+                    <strong>PKR {{ item.subtotal }}</strong>
+                </div>
+                {% endfor %}
+            {% endif %}
+
+            <div class="summary-line" style="margin-top: 8px;">
+                <span>Delivery Charges</span>
+                <strong>PKR {{ order.delivery_fee }}</strong>
+            </div>
+
+            <div style="border-top: 1px solid var(--border-color); margin-top: 10px; padding-top: 8px; display: flex; justify-content: space-between;">
+                <strong>Total Amount Paid</strong>
+                <strong class="green-text">PKR {{ order.total }}</strong>
+            </div>
+        </div>
+
+        <a href="{{ url_for('home') }}" class="btn-main" style="display: inline-block; text-decoration: none; margin-top: 10px;">Return to Homepage</a>
+    </div>
+</div>
+{% endblock %}
