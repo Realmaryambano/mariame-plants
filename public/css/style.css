@@ -43,6 +43,24 @@ h1, h2, h3, .logo {
     letter-spacing: -0.01em;
 }
 
+/* Target the container wrapping your product images */
+.product-card .image-container, 
+.product-image-wrap {
+    width: 100%;
+    height: 220px; /* Adjust this height depending on how tall you want the cards */
+    overflow: hidden;
+    position: relative;
+    background-color: #161b12; /* Fallback background for transparent or loading images */
+}
+
+/* Ensure the image scales smoothly to cover the box without distortion */
+.product-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+}
 /* Header & Navigation */
 .site-header {
     background: var(--bg-main);
@@ -394,15 +412,7 @@ h1, h2, h3, .logo {
     gap: 16px;
 }
 
-.product-card {
-    background: var(--bg-surface);
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    overflow: hidden;
-    box-shadow: var(--shadow-soft);
-    display: flex;
-    flex-direction: column;
-}
+
 
 .product-card-top {
     height: 140px;
