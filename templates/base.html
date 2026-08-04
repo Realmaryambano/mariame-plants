@@ -1,7 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-<!DOCTYPE html>
-<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,14 +20,18 @@
 <body data-theme="light">
 
     <!-- Header Navigation -->
- <!-- Header Navigation -->
     <header class="site-header">
         <div class="nav-container">
             <!-- Brand Logo -->
             <a href="{{ url_for('home') }}" class="logo">Mariamé <span>Plants</span></a>
             
+            <!-- Mobile Menu Toggle Button -->
+            <button class="mobile-menu-toggle" id="mobile-menu-btn" aria-label="Toggle Navigation">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            
             <!-- Centralized Navigation Links -->
-            <nav class="nav-links">
+            <nav class="nav-links" id="nav-links-container">
                 <a href="{{ url_for('home') }}" {% if request.endpoint == 'home' %}class="active"{% endif %}>Home</a>
                 <a href="{{ url_for('shop') }}" {% if request.endpoint == 'shop' %}class="active"{% endif %}>Collection</a>
                 <a href="{{ url_for('about') }}" {% if request.endpoint == 'about' %}class="active"{% endif %}>About Us</a>
@@ -93,34 +95,53 @@
         </div>
     </footer>
 
-    <!-- Persistent Theme Engine Script -->
+    <!-- Site Interaction Scripts -->
     <script>
+        // 1. Mobile Navbar Toggle Script
+        const mobileBtn = document.getElementById('mobile-menu-btn');
+        const navLinksContainer = document.getElementById('nav-links-container');
+
+        if (mobileBtn && navLinksContainer) {
+            mobileBtn.addEventListener('click', () => {
+                navLinksContainer.classList.toggle('active');
+                // Optional: toggle icon between bars and 'X'
+                const icon = mobileBtn.querySelector('i');
+                if (icon) {
+                    icon.classList.toggle('fa-bars');
+                    icon.classList.toggle('fa-xmark');
+                }
+            });
+        }
+
+        // 2. Persistent Theme Engine Script
         const toggleBtn = document.getElementById('theme-toggle');
         const bodyEl = document.body;
         
-        // Retrieve and apply saved theme preference instantly
         const savedTheme = localStorage.getItem('mariame_theme');
         if (savedTheme) {
             bodyEl.setAttribute('data-theme', savedTheme);
-            if (savedTheme === 'dark') {
-                toggleBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
-            } else {
-                toggleBtn.innerHTML = '<i class="fa-solid fa-moon"></i>';
+            if (toggleBtn) {
+                if (savedTheme === 'dark') {
+                    toggleBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
+                } else {
+                    toggleBtn.innerHTML = '<i class="fa-solid fa-moon"></i>';
+                }
             }
         }
 
-        // Toggle theme state on click and persist user choice
-        toggleBtn.addEventListener('click', () => {
-            if (bodyEl.getAttribute('data-theme') === 'light') {
-                bodyEl.setAttribute('data-theme', 'dark');
-                toggleBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
-                localStorage.setItem('mariame_theme', 'dark');
-            } else {
-                bodyEl.setAttribute('data-theme', 'light');
-                toggleBtn.innerHTML = '<i class="fa-solid fa-moon"></i>';
-                localStorage.setItem('mariame_theme', 'light');
-            }
-        });
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', () => {
+                if (bodyEl.getAttribute('data-theme') === 'light') {
+                    bodyEl.setAttribute('data-theme', 'dark');
+                    toggleBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
+                    localStorage.setItem('mariame_theme', 'dark');
+                } else {
+                    bodyEl.setAttribute('data-theme', 'light');
+                    toggleBtn.innerHTML = '<i class="fa-solid fa-moon"></i>';
+                    localStorage.setItem('mariame_theme', 'light');
+                }
+            });
+        }
     </script>
 </body>
 </html>
