@@ -114,7 +114,7 @@ PRODUCTS = [
     {"id": 27, "name": "Nordic Concrete Textured Cachepot", "category": "pots", "badge": "Industrial", "price": 2900, "rating": 4.8, "desc": "Heavy-duty urban architectural grey concrete planter tailored for statement corners.",
      "image": "Nordic Concrete Textured Cachepot.png"},
     {"id": 28, "name": "Glazed Japanese Bonsai Training Tray", "category": "pots", "badge": "Specialty", "price": 3500, "rating": 4.9, "desc": "Overtly shallow oval ceramic dish finished in deep emerald celadon glaze with drainage mesh.",
-     "image": "Glazed Japanese Bonsai Training Tray.png"}
+     "image": "Glazed-Japanese-Bonsai-Training-Tray.png"}
 ]
 
 DELIVERY_FEE = 350
