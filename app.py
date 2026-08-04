@@ -80,7 +80,7 @@ PRODUCTS = [
     {"id": 10, "name": "Hibiscus Rosa-Sinensis", "category": "outdoor", "badge": "Exotic", "price": 2200, "rating": 4.5, "desc": "Dazzling tropical blooms with deep red ruffled petals that thrive under full sunlight.",
       "image": "Hibiscus Rosa-Sinensis.png"},
     {"id": 11, "name": "Golden Barrel Cactus", "category": "cactus", "badge": "Popular", "price": 3000, "rating": 4.7, "desc": "Symmetrical globe-shaped succulent cactus adorned with striking golden-yellow spines.",
-      "image": "Golden Barrel Cactus.png"},
+      "image": "golden-cactus.png"},
     {"id": 12, "name": "Echeveria Elegans Rosette", "category": "cactus", "badge": "Cute", "price": 1200, "rating": 4.8, "desc": "Tightly formed succulent rosettes displaying pale blue-green fleshy leaves.",
       "image": "Echeveria Elegans Rosette.png"},
     {"id": 13, "name": "Aloe Vera Medicinal", "category": "cactus", "badge": "Useful", "price": 1500, "rating": 4.9, "desc": "Functional succulent with thick gel-filled leaves famous for soothing skin care properties.",
