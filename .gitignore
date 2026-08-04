@@ -1,0 +1,9 @@
+# Environment variables containing secret keys
+.env
+
+# Local SQLite database files
+*.db
+
+# Python temporary cache files
+__pycache__/
+*.pyc

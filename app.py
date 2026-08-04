@@ -1,14 +1,24 @@
+from dotenv import load_dotenv
+load_dotenv()
+import os
+from io import BytesIO
+import resend
+
 from flask import Flask, render_template, request, redirect, url_for, session, flash, make_response
 from flask_sqlalchemy import SQLAlchemy
-from io import BytesIO
+
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
-import os
 
 app = Flask(__name__)
 app.secret_key = 'mariame_plants_international_secret_key'
+
+# Resend API Configuration
+RESEND_KEY = os.environ.get("RESEND_API_KEY")
+resend.api_key = RESEND_KEY
+NOTIFICATION_EMAIL = "maryambano.official@gmail.com"
 
 # Configure SQLite Database File Locally
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -17,7 +27,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
-# Database Model for Orders
+# Database Models
 class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
@@ -38,163 +48,73 @@ class OrderItem(db.Model):
     price = db.Column(db.Float, nullable=False)
     subtotal = db.Column(db.Float, nullable=False)
 
-# 28 International-Grade Plant, Soil, and Decor Products
+class ContactMessage(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(120), nullable=False)
+    message = db.Column(db.Text, nullable=False)
+
+# Products Catalog
 PRODUCTS = [
-    {
-        "id": 1, "name": "Monstera Deliciosa", "category": "indoor", 
-        "badge": "Bestseller", "price": 4500, "rating": 4.9, 
-        "desc": "Famous Swiss Cheese plant known for natural leaf splits and tropical presence.",
-        "image": "Monstera_Deliciosa.png"
-    },
-    {
-        "id": 2, "name": "Fiddle Leaf Fig (Ficus lyrata)", "category": "indoor", 
-        "badge": "Trending", "price": 6800, "rating": 4.8, 
-        "desc": "Architectural statement plant with broad, violin-shaped glossy dark green leaves.",
-        "image": "fiddle.png"
-    },
-    {
-        "id": 3, "name": "Snake Plant Laurentii", "category": "indoor", 
-        "badge": "Hardy", "price": 2800, "rating": 4.7, 
-        "desc": "Nearly indestructible air-purifying plant featuring striking yellow-bordered stiff leaves.",
-        "image": "snake.png"
-    },
-    {
-        "id": 4, "name": "ZZ Plant (Zamioculcas zamiifolia)", "category": "indoor", 
-        "badge": "Low Light", "price": 3200, "rating": 4.9, 
-        "desc": "Glossy, emerald-green stems that thrive gracefully in dimly lit office or room spaces.",
-        "image": "zz_plant.png"
-    },
-    {
-        "id": 5, "name": "Peace Lily (Spathiphyllum)", "category": "indoor", 
-        "badge": "Air Purifier", "price": 2500, "rating": 4.6, 
-        "desc": "Elegant dark foliage paired with striking white spathe blooms that clean indoor air.",
-        "image": "peace-lily.png"   
-    },
-    {
-        "id": 6, "name": "Areca Palm (Dypsis lutescens)", "category": "outdoor", 
-        "badge": "Tropical", "price": 5200, "rating": 4.8, 
-        "desc": "Feathery, graceful fronds that introduce an instant resort-like ambiance to patios.",
-        "image": "areca-palm.png"
-    },
-    {
-        "id": 7, "name": "Bougainvillea Bonsai Specimen", "category": "outdoor", 
-        "badge": "Vibrant", "price": 4100, "rating": 4.7, 
-        "desc": "Sun-loving outdoor flowering shrub featuring vibrant magenta bracts and strong woody trunk.",
-        "image": "bougainvillea.png"
-    },
-    {
-        "id": 8, "name": "Sago Palm (Cycas revoluta)", "category": "outdoor", 
-        "badge": "Classic", "price": 7500, "rating": 4.9, 
-        "desc": "Stately architectural cycad with stiff, dark green glossy fronds resistant to heat.",
-        "image": "sago-palm.png"
-    },
-    {
-        "id": 9, "name": "Jasmine (Jasminum sambac)", "category": "outdoor", 
-        "badge": "Fragrant", "price": 1800, "rating": 4.8, 
-        "desc": "Beloved traditional climber producing intensely sweet nocturnal aromatic white blossoms.",
-        "image": "jasmine.png"
-    },
-    {
-        "id": 10, "name": "Hibiscus Rosa-Sinensis", "category": "outdoor", 
-        "badge": "Exotic", "price": 2200, "rating": 4.5, 
-        "desc": "Dazzling tropical blooms with deep red ruffled petals that thrive under full sunlight.",
-        "image": "Hibiscus Rosa-Sinensis.png"
-    },
-    {
-        "id": 11, "name": "Golden Barrel Cactus", "category": "cactus", 
-        "badge": "Popular", "price": 3000, "rating": 4.7, 
-        "desc": "Symmetrical globe-shaped succulent cactus adorned with striking golden-yellow spines.",
-        "image": "Golden Barrel Cactus.png"
-    },
-    {
-        "id": 12, "name": "Echeveria Elegans Rosette", "category": "cactus", 
-        "badge": "Cute", "price": 1200, "rating": 4.8, 
-        "desc": "Tightly formed succulent rosettes displaying pale blue-green fleshy leaves.",
-        "image": "Echeveria Elegans Rosette.png"
-    },
-    {
-        "id": 13, "name": "Aloe Vera Medicinal", "category": "cactus", 
-        "badge": "Useful", "price": 1500, "rating": 4.9, 
-        "desc": "Functional succulent with thick gel-filled leaves famous for soothing skin care properties.",
-        "image": "Aloe Vera Medicinal.png"
-    },
-    {
-        "id": 14, "name": "Haworthia Zebra Succulent", "category": "cactus", 
-        "badge": "Mini", "price": 1100, "rating": 4.6, 
-        "desc": "Compact dark green succulent featuring distinct horizontal white bumpy zebra stripes.",
-        "image": "Haworthia Zebra Succulent.png"
-    },
-    {
-        "id": 15, "name": "Pachycereus Candelabra Cactus", "category": "cactus", 
-        "badge": "Statement", "price": 5500, "rating": 4.9, 
-        "desc": "Tall branching architectural desert column specimen for high-end interior styling.",
-        "image": "Pachycereus Candelabra Cactus.png"
-    },
-    {
-        "id": 16, "name": "Ficus Retusa Bonsai", "category": "bonsai", 
-        "badge": "Masterpiece", "price": 9500, "rating": 5.0, 
-        "desc": "Aged trunk structure with aerial roots and deep green canopy, expertly trained."
-    },
-    {
-        "id": 17, "name": "Chinese Elm Bonsai", "category": "bonsai", 
-        "badge": "Artisanal", "price": 8800, "rating": 4.8, 
-        "desc": "Classic indoor-tolerant bonsai featuring fine twig branching and small textured leaves."
-    },
-    {
-        "id": 18, "name": "Carmona Microphylla (Fujian Tea)", "category": "bonsai", 
-        "badge": "Exquisite", "price": 10500, "rating": 4.9, 
-        "desc": "Stunning oriental bonsai bearing glossy dark leaves and tiny white star flowers."
-    },
-    {
-        "id": 19, "name": "Juniper Procumbens Nana", "category": "bonsai", 
-        "badge": "Classic", "price": 7200, "rating": 4.7, 
-        "desc": "Evergreen needle-form conifer styled in traditional cascade and slanting aesthetics."
-    },
-    {
-        "id": 20, "name": "Mariamé Premium Aroid Soil Mix (5kg)", "category": "soil", 
-        "badge": "Best Grade", "price": 1600, "rating": 5.0, 
-        "desc": "Custom coarse blend of chunky orchid bark, perlite, horticultural charcoal, and organic peat."
-    },
-    {
-        "id": 21, "name": "Cactus & Succulent Grit Blend (3kg)", "category": "soil", 
-        "badge": "Fast Draining", "price": 1200, "rating": 4.8, 
-        "desc": "Mineral-heavy fast draining substrate formula engineered to completely prevent root rot."
-    },
-    {
-        "id": 22, "name": "Nutrient-Dense Organic Worm Castings", "category": "soil", 
-        "badge": "Bio-Active", "price": 950, "rating": 4.9, 
-        "desc": "Pure organic earthworm compost loaded with beneficial microbes and natural plant growth hormones."
-    },
-    {
-        "id": 23, "name": "Expanded Perlite & Pumice Aeration Pack", "category": "soil", 
-        "badge": "Essential", "price": 850, "rating": 4.7, 
-        "desc": "Lightweight volcanic rock additives designed to maximize oxygen flow inside heavy soils."
-    },
-    {
-        "id": 24, "name": "Handmade Terracotta Cylinder Pot", "category": "pots", 
-        "badge": "Handmade", "price": 1800, "rating": 4.8, 
-        "desc": "Breathable classic terracotta clay vessel featuring a matching bottom drainage saucer."
-    },
-    {
-        "id": 25, "name": "Minimalist Matte Ceramic Planter", "category": "pots", 
-        "badge": "Modern", "price": 2400, "rating": 4.9, 
-        "desc": "Sleek contemporary ceramic pot finished with a luxury soft-touch matte protective coating."
-    },
-    {
-        "id": 26, "name": "Woven Natural Seagrass Basket Pot", "category": "pots", 
-        "badge": "Boho Style", "price": 2100, "rating": 4.7, 
-        "desc": "Hand-woven organic seagrass basket equipped with a protective inner plastic moisture liner."
-    },
-    {
-        "id": 27, "name": "Nordic Concrete Textured Cachepot", "category": "pots", 
-        "badge": "Industrial", "price": 2900, "rating": 4.8, 
-        "desc": "Heavy-duty urban architectural grey concrete planter tailored for statement corners."
-    },
-    {
-        "id": 28, "name": "Glazed Japanese Bonsai Training Tray", "category": "pots", 
-        "badge": "Specialty", "price": 3500, "rating": 4.9, 
-        "desc": "Overtly shallow oval ceramic dish finished in deep emerald celadon glaze with drainage mesh."
-    }
+    {"id": 1, "name": "Monstera Deliciosa",
+    "category": "indoor", "badge": "Bestseller",
+    "price": 4500, "rating": 4.9,
+    "desc": "Famous Swiss Cheese plant known for natural leaf splits and tropical presence.",
+    "image": "Monstera_Deliciosa.png"},
+    {"id": 2, "name": "Fiddle Leaf Fig (Ficus lyrata)", "category": "indoor", "badge": "Trending", "price": 6800, "rating": 4.8, "desc": "Architectural statement plant with broad, violin-shaped glossy dark green leaves.",
+      "image": "fiddle.png"},
+    {"id": 3, "name": "Snake Plant Laurentii", "category": "indoor", "badge": "Hardy", "price": 2800, "rating": 4.7, "desc": "Nearly indestructible air-purifying plant featuring striking yellow-bordered stiff leaves.",
+      "image": "snake.png"},
+    {"id": 4, "name": "ZZ Plant (Zamioculcas zamiifolia)", "category": "indoor", "badge": "Low Light", "price": 3200, "rating": 4.9, "desc": "Glossy, emerald-green stems that thrive gracefully in dimly lit office or room spaces.",
+      "image": "zz_plant.png"},
+    {"id": 5, "name": "Peace Lily (Spathiphyllum)", "category": "indoor", "badge": "Air Purifier", "price": 2500, "rating": 4.6, "desc": "Elegant dark foliage paired with striking white spathe blooms that clean indoor air.",
+      "image": "peace-lily.png"},
+    {"id": 6, "name": "Areca Palm (Dypsis lutescens)", "category": "outdoor", "badge": "Tropical", "price": 5200, "rating": 4.8, "desc": "Feathery, graceful fronds that introduce an instant resort-like ambiance to patios.",
+      "image": "areca-palm.png"},
+    {"id": 7, "name": "Bougainvillea Bonsai Specimen", "category": "outdoor", "badge": "Vibrant", "price": 4100, "rating": 4.7, "desc": "Sun-loving outdoor flowering shrub featuring vibrant magenta bracts and strong woody trunk.",
+      "image": "bougainvillea.png"},
+    {"id": 8, "name": "Sago Palm (Cycas revoluta)", "category": "outdoor", "badge": "Classic", "price": 7500, "rating": 4.9, "desc": "Stately architectural cycad with stiff, dark green glossy fronds resistant to heat.",
+      "image": "sago-palm.png"},
+    {"id": 9, "name": "Jasmine (Jasminum sambac)", "category": "outdoor", "badge": "Fragrant", "price": 1800, "rating": 4.8, "desc": "Beloved traditional climber producing intensely sweet nocturnal aromatic white blossoms.",
+      "image": "jasmine.png"},
+    {"id": 10, "name": "Hibiscus Rosa-Sinensis", "category": "outdoor", "badge": "Exotic", "price": 2200, "rating": 4.5, "desc": "Dazzling tropical blooms with deep red ruffled petals that thrive under full sunlight.",
+      "image": "Hibiscus Rosa-Sinensis.png"},
+    {"id": 11, "name": "Golden Barrel Cactus", "category": "cactus", "badge": "Popular", "price": 3000, "rating": 4.7, "desc": "Symmetrical globe-shaped succulent cactus adorned with striking golden-yellow spines.",
+      "image": "Golden Barrel Cactus.png"},
+    {"id": 12, "name": "Echeveria Elegans Rosette", "category": "cactus", "badge": "Cute", "price": 1200, "rating": 4.8, "desc": "Tightly formed succulent rosettes displaying pale blue-green fleshy leaves.",
+      "image": "Echeveria Elegans Rosette.png"},
+    {"id": 13, "name": "Aloe Vera Medicinal", "category": "cactus", "badge": "Useful", "price": 1500, "rating": 4.9, "desc": "Functional succulent with thick gel-filled leaves famous for soothing skin care properties.",
+      "image": "Aloe Vera Medicinal.png"},
+    {"id": 14, "name": "Haworthia Zebra Succulent", "category": "cactus", "badge": "Mini", "price": 1100, "rating": 4.6, "desc": "Compact dark green succulent featuring distinct horizontal white bumpy zebra stripes.",
+      "image": "Haworthia Zebra Succulent.png"},
+    {"id": 15, "name": "Pachycereus Candelabra Cactus", "category": "cactus", "badge": "Statement", "price": 5500, "rating": 4.9, "desc": "Tall branching architectural desert column specimen for high-end interior styling.",
+      "image": "Pachycereus Candelabra Cactus.png"},
+    {"id": 16, "name": "Ficus Retusa Bonsai", "category": "bonsai", "badge": "Masterpiece", "price": 9500, "rating": 5.0, "desc": "Aged trunk structure with aerial roots and deep green canopy, expertly trained.",
+     "image": "Ficus Retusa Bonsai.png"},
+    {"id": 17, "name": "Chinese Elm Bonsai", "category": "bonsai", "badge": "Artisanal", "price": 8800, "rating": 4.8, "desc": "Classic indoor-tolerant bonsai featuring fine twig branching and small textured leaves.",
+     "image": "Chinese Elm Bonsai.png"},
+    {"id": 18, "name": "Carmona Microphylla (Fujian Tea)", "category": "bonsai", "badge": "Exquisite", "price": 10500, "rating": 4.9, "desc": "Stunning oriental bonsai bearing glossy dark leaves and tiny white star flowers.",
+     "image": "Carmona Microphylla (Fujian Tea).png"},
+    {"id": 19, "name": "Juniper Procumbens Nana", "category": "bonsai", "badge": "Classic", "price": 7200, "rating": 4.7, "desc": "Evergreen needle-form conifer styled in traditional cascade and slanting aesthetics.",
+     "image": "Juniper Procumbens Nana.png"},
+    {"id": 20, "name": "Mariamé Premium Aroid Soil Mix (5kg)", "category": "soil", "badge": "Best Grade", "price": 1600, "rating": 5.0, "desc": "Custom coarse blend of chunky orchid bark, perlite, horticultural charcoal, and organic peat.",
+     "image": "Mariamé Premium Aroid Soil Mix (5kg).png"},
+    {"id": 21, "name": "Cactus & Succulent Grit Blend (3kg)", "category": "soil", "badge": "Fast Draining", "price": 1200, "rating": 4.8, "desc": "Mineral-heavy fast draining substrate formula engineered to completely prevent root rot.",
+     "image": "Cactus & Succulent Grit Blend (3kg).png"},
+    {"id": 22, "name": "Nutrient-Dense Organic Worm Castings", "category": "soil", "badge": "Bio-Active", "price": 950, "rating": 4.9, "desc": "Pure organic earthworm compost loaded with beneficial microbes and natural plant growth hormones.",
+     "image": "Nutrient-Dense Organic Worm Castings.png"},
+    {"id": 23, "name": "Expanded Perlite & Pumice Aeration Pack", "category": "soil", "badge": "Essential", "price": 850, "rating": 4.7, "desc": "Lightweight volcanic rock additives designed to maximize oxygen flow inside heavy soils.",
+     "image": "Expanded Perlite & Pumice Aeration Pack.png"},
+    {"id": 24, "name": "Handmade Terracotta Cylinder Pot", "category": "pots", "badge": "Handmade", "price": 1800, "rating": 4.8, "desc": "Breathable classic terracotta clay vessel featuring a matching bottom drainage saucer.",
+     "image": "Handmade Terracotta Cylinder Pot.png"},
+    {"id": 25, "name": "Minimalist Matte Ceramic Planter", "category": "pots", "badge": "Modern", "price": 2400, "rating": 4.9, "desc": "Sleek contemporary ceramic pot finished with a luxury soft-touch matte protective coating.",
+     "image": "Minimalist Matte Ceramic Planter.png"},
+    {"id": 26, "name": "Woven Natural Seagrass Basket Pot", "category": "pots", "badge": "Boho Style", "price": 2100, "rating": 4.7, "desc": "Hand-woven organic seagrass basket equipped with a protective inner plastic moisture liner.",
+     "image": "Woven Natural Seagrass Basket Pot.png"},
+    {"id": 27, "name": "Nordic Concrete Textured Cachepot", "category": "pots", "badge": "Industrial", "price": 2900, "rating": 4.8, "desc": "Heavy-duty urban architectural grey concrete planter tailored for statement corners.",
+     "image": "Nordic Concrete Textured Ciachepot.png"},
+    {"id": 28, "name": "Glazed Japanese Bonsai Training Tray", "category": "pots", "badge": "Specialty", "price": 3500, "rating": 4.9, "desc": "Overtly shallow oval ceramic dish finished in deep emerald celadon glaze with drainage mesh.",
+     "image": "Glazed Japanese Bonsai Training Tray.png"}
 ]
 
 DELIVERY_FEE = 350
@@ -337,12 +257,19 @@ def checkout():
     total_price = subtotal_price + delivery_fee
             
     if request.method == 'POST':
+        name = request.form.get('name')
+        phone = request.form.get('phone')
+        city = request.form.get('city')
+        soil_weight = request.form.get('soil_weight')
+        address = request.form.get('address')
+
+        # Create new order record
         new_order = Order(
-            name=request.form.get('name'),
-            phone=request.form.get('phone'),
-            city=request.form.get('city'),
-            soil_weight=request.form.get('soil_weight'),
-            address=request.form.get('address'),
+            name=name,
+            phone=phone,
+            city=city,
+            soil_weight=soil_weight,
+            address=address,
             subtotal=subtotal_price,
             delivery_fee=delivery_fee,
             total=total_price
@@ -350,6 +277,8 @@ def checkout():
         db.session.add(new_order)
         db.session.commit()
 
+        # Create order items
+        item_rows_html = ""
         for item in detailed_cart:
             order_item = OrderItem(
                 order_id=new_order.id,
@@ -359,7 +288,38 @@ def checkout():
                 subtotal=item['subtotal']
             )
             db.session.add(order_item)
+            item_rows_html += f"<li><b>{item['product']['name']}</b> x {item['quantity']} - PKR {item['subtotal']}</li>"
+        
         db.session.commit()
+
+        # Send Order Notification Email via Resend
+        try:
+            params = {
+                "from": "Mariamé Plants <onboarding@resend.dev>",
+                "to": [NOTIFICATION_EMAIL],
+                "subject": f"🌿 New Order #{new_order.id} from {name}",
+                "html": f"""
+                    <h2>New Order Placed!</h2>
+                    <p><b>Order ID:</b> #{new_order.id}</p>
+                    <p><b>Customer Name:</b> {name}</p>
+                    <p><b>Phone:</b> {phone}</p>
+                    <p><b>City:</b> {city}</p>
+                    <p><b>Address:</b> {address}</p>
+                    <p><b>Soil Weight Selection:</b> {soil_weight or 'N/A'}</p>
+                    <hr>
+                    <h3>Ordered Items:</h3>
+                    <ul>
+                        {item_rows_html}
+                    </ul>
+                    <hr>
+                    <p><b>Subtotal:</b> PKR {subtotal_price}</p>
+                    <p><b>Delivery Fee:</b> PKR {delivery_fee}</p>
+                    <p><b>Total Amount:</b> <b>PKR {total_price}</b></p>
+                """
+            }
+            resend.Emails.send(params)
+        except Exception as e:
+            print("Error sending order email:", e)
 
         session['last_order_id'] = new_order.id
         session.pop('cart', None)
@@ -451,11 +411,6 @@ def download_invoice_pdf():
     response.headers['Content-Disposition'] = f"attachment; filename=Mariame_Invoice_{order.name.replace(' ', '_')}.pdf"
     return response
 
-import resend
-
-# Set up your Resend API key
-resend.api_key = "abc"
-
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
     if request.method == 'POST':
@@ -463,11 +418,16 @@ def contact():
         email = request.form.get('email')
         message = request.form.get('message')
         
+        # Save message to database
+        new_msg = ContactMessage(name=name, email=email, message=message)
+        db.session.add(new_msg)
+        db.session.commit()
+        
         try:
             # Send the email via Resend API
             params = {
                 "from": "Mariamé Plants <onboarding@resend.dev>",
-                "to": ["maryambano.official@gmail.com"],
+                "to": [NOTIFICATION_EMAIL],
                 "subject": f"New Contact Message from {name}",
                 "html": f"""
                     <h3>New Customer Message</h3>
@@ -485,12 +445,6 @@ def contact():
         return redirect(url_for('contact'))
         
     return render_template('contact.html')
-
-class ContactMessage(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(120), nullable=False)
-    message = db.Column(db.Text, nullable=False)
 
 if __name__ == '__main__':
     with app.app_context():
