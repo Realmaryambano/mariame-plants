@@ -26,7 +26,33 @@ body[data-theme="dark"] {
     padding: 0;
     font-family: 'Inter', sans-serif;
 }
+/* Hide standard menu links on mobile */
+@media (max-width: 768px) {
+    .nav-links {
+        display: none; /* Hidden by default until toggled */
+        flex-direction: column;
+        width: 100%;
+        position: absolute;
+        top: 70px;
+        left: 0;
+        background-color: #fff; /* or your theme background */
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    
+    .nav-links.active {
+        display: flex; /* Shown when hamburger is clicked */
+    }
+    
+    .mobile-menu-toggle {
+        display: block; /* Show hamburger button on mobile */
+    }
+}
 
+@media (min-width: 769px) {
+    .mobile-menu-toggle {
+        display: none; /* Hide hamburger on desktop */
+    }
+}
 body {
     background-color: var(--bg-main);
     color: var(--text-primary);
