@@ -112,7 +112,7 @@ PRODUCTS = [
     {"id": 26, "name": "Woven Natural Seagrass Basket Pot", "category": "pots", "badge": "Boho Style", "price": 2100, "rating": 4.7, "desc": "Hand-woven organic seagrass basket equipped with a protective inner plastic moisture liner.",
      "image": "Woven Natural Seagrass Basket Pot.png"},
     {"id": 27, "name": "Nordic Concrete Textured Cachepot", "category": "pots", "badge": "Industrial", "price": 2900, "rating": 4.8, "desc": "Heavy-duty urban architectural grey concrete planter tailored for statement corners.",
-     "image": "Nordic Concrete Textured Ciachepot.png"},
+     "image": "Nordic Concrete Textured Cachepot.png"},
     {"id": 28, "name": "Glazed Japanese Bonsai Training Tray", "category": "pots", "badge": "Specialty", "price": 3500, "rating": 4.9, "desc": "Overtly shallow oval ceramic dish finished in deep emerald celadon glaze with drainage mesh.",
      "image": "Glazed Japanese Bonsai Training Tray.png"}
 ]
