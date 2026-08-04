@@ -448,7 +448,6 @@ def clear_cart():
     session.pop('cart', None)
     flash('Cart has been cleared.', 'info')
     return redirect(url_for('cart'))
-
 @app.route('/checkout', methods=['GET', 'POST'])
 def checkout():
     cart_items = session.get('cart', {})
@@ -485,44 +484,53 @@ def checkout():
         soil_weight = request.form.get('soil_weight')
         address = request.form.get('address')
 
-        # Create new order record
-        new_order = Order(
-            name=name,
-            phone=phone,
-            city=city,
-            soil_weight=soil_weight,
-            address=address,
-            subtotal=subtotal_price,
-            delivery_fee=delivery_fee,
-            total=total_price
-        )
-        db.session.add(new_order)
-        db.session.commit()
+        # Dummy ID fallback if database write is skipped on Vercel
+        order_id_display = "NEW"
 
-        # Create order items
+        # Try saving order to SQLite database safely
+        try:
+            new_order = Order(
+                name=name,
+                phone=phone,
+                city=city,
+                soil_weight=soil_weight,
+                address=address,
+                subtotal=subtotal_price,
+                delivery_fee=delivery_fee,
+                total=total_price
+            )
+            db.session.add(new_order)
+            db.session.commit()
+            order_id_display = new_order.id
+
+            # Create order items
+            for item in detailed_cart:
+                order_item = OrderItem(
+                    order_id=new_order.id,
+                    product_name=item['product']['name'],
+                    quantity=item['quantity'],
+                    price=item['product']['price'],
+                    subtotal=item['subtotal']
+                )
+                db.session.add(order_item)
+            db.session.commit()
+        except Exception as db_err:
+            print("Database write skipped on serverless platform:", db_err)
+
+        # Build HTML rows for the email
         item_rows_html = ""
         for item in detailed_cart:
-            order_item = OrderItem(
-                order_id=new_order.id,
-                product_name=item['product']['name'],
-                quantity=item['quantity'],
-                price=item['product']['price'],
-                subtotal=item['subtotal']
-            )
-            db.session.add(order_item)
             item_rows_html += f"<li><b>{item['product']['name']}</b> x {item['quantity']} - PKR {item['subtotal']}</li>"
-        
-        db.session.commit()
 
         # Send Order Notification Email via Resend
         try:
             params = {
                 "from": "Mariamé Plants <onboarding@resend.dev>",
                 "to": [NOTIFICATION_EMAIL],
-                "subject": f"🌿 New Order #{new_order.id} from {name}",
+                "subject": f"🌿 New Order #{order_id_display} from {name}",
                 "html": f"""
                     <h2>New Order Placed!</h2>
-                    <p><b>Order ID:</b> #{new_order.id}</p>
+                    <p><b>Order ID:</b> #{order_id_display}</p>
                     <p><b>Customer Name:</b> {name}</p>
                     <p><b>Phone:</b> {phone}</p>
                     <p><b>City:</b> {city}</p>
@@ -543,12 +551,11 @@ def checkout():
         except Exception as e:
             print("Error sending order email:", e)
 
-        session['last_order_id'] = new_order.id
+        session['last_order_id'] = order_id_display if order_id_display != "NEW" else 1
         session.pop('cart', None)
         return redirect(url_for('order_success'))
         
     return render_template('checkout.html', cart_items=detailed_cart, subtotal=subtotal_price, delivery_fee=delivery_fee, total_price=total_price)
-
 @app.route('/order-success')
 def order_success():
     order_id = session.get('last_order_id')
@@ -640,13 +647,15 @@ def contact():
         email = request.form.get('email')
         message = request.form.get('message')
         
-        # Save message to database
-        new_msg = ContactMessage(name=name, email=email, message=message)
-        db.session.add(new_msg)
-        db.session.commit()
+        # Try saving to database, pass if read-only filesystem blocks it on Vercel
+        try:
+            new_msg = ContactMessage(name=name, email=email, message=message)
+            db.session.add(new_msg)
+            db.session.commit()
+        except Exception as db_err:
+            print("Database write skipped on serverless:", db_err)
         
         try:
-            # Send the email via Resend API
             params = {
                 "from": "Mariamé Plants <onboarding@resend.dev>",
                 "to": [NOTIFICATION_EMAIL],
