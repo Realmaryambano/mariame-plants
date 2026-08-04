@@ -13,7 +13,7 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
 
 # Tell Flask to serve static files from the 'public' folder instead of 'static'
-app = Flask(__name__, static_folder='public', static_url_path='')
+app = Flask(__name__, static_folder='static', static_url_path='')
 app.secret_key = 'mariame_plants_international_secret_key'
 
 # Resend API Configuration
