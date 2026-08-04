@@ -240,10 +240,6 @@ def shop():
 def about():
     return render_template('about.html')
 
-@app.route('/contact')
-def contact():
-    return render_template('contact.html')
-
 @app.route('/cart')
 def cart():
     cart_items = session.get('cart', {})
@@ -341,7 +337,6 @@ def checkout():
     total_price = subtotal_price + delivery_fee
             
     if request.method == 'POST':
-        # Create a new SQL Order Record
         new_order = Order(
             name=request.form.get('name'),
             phone=request.form.get('phone'),
@@ -355,7 +350,6 @@ def checkout():
         db.session.add(new_order)
         db.session.commit()
 
-        # Save individual ordered items linked to the order ID in SQL
         for item in detailed_cart:
             order_item = OrderItem(
                 order_id=new_order.id,
@@ -367,7 +361,6 @@ def checkout():
             db.session.add(order_item)
         db.session.commit()
 
-        # Store order ID in session to display on success page & PDF
         session['last_order_id'] = new_order.id
         session.pop('cart', None)
         return redirect(url_for('order_success'))
@@ -458,7 +451,48 @@ def download_invoice_pdf():
     response.headers['Content-Disposition'] = f"attachment; filename=Mariame_Invoice_{order.name.replace(' ', '_')}.pdf"
     return response
 
+import resend
+
+# Set up your Resend API key
+resend.api_key = "abc"
+
+@app.route('/contact', methods=['GET', 'POST'])
+def contact():
+    if request.method == 'POST':
+        name = request.form.get('name')
+        email = request.form.get('email')
+        message = request.form.get('message')
+        
+        try:
+            # Send the email via Resend API
+            params = {
+                "from": "Mariamé Plants <onboarding@resend.dev>",
+                "to": ["maryambano.official@gmail.com"],
+                "subject": f"New Contact Message from {name}",
+                "html": f"""
+                    <h3>New Customer Message</h3>
+                    <p><b>Name:</b> {name}</p>
+                    <p><b>Email:</b> {email}</p>
+                    <p><b>Message:</b></p>
+                    <p>{message}</p>
+                """
+            }
+            resend.Emails.send(params)
+            flash('Thank you for reaching out! Your message has been sent successfully.', 'success')
+        except Exception as e:
+            flash('An error occurred while sending your message. Please try again later.', 'danger')
+            
+        return redirect(url_for('contact'))
+        
+    return render_template('contact.html')
+
+class ContactMessage(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(120), nullable=False)
+    message = db.Column(db.Text, nullable=False)
+
 if __name__ == '__main__':
     with app.app_context():
-        db.create_all()  # Automatically creates mariame_plants.db file locally
+        db.create_all()
     app.run(debug=True)
