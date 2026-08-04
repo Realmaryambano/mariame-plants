@@ -13,7 +13,7 @@ An international-grade, full-stack e-commerce web application and botanical ecos
 
 ## 🌐 Live Demo
 
-Experience the project live: [View Live Demo]( https://mariaméplants.vercel.app)
+Experience the project live: [View Live Demo]( https://mariame-plants.vercel.app)
 
 
 ---
