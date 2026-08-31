@@ -3,6 +3,11 @@ load_dotenv()
 import os
 from io import BytesIO
 import resend
+from flask import send_from_directory
+
+@app.route('/google86bcbe9313deda11.html')
+def google_verify():
+    return send_from_directory('static', 'google86bcbe9313deda11.html')
 
 from flask import Flask, render_template, request, redirect, url_for, session, flash, make_response
 from flask_sqlalchemy import SQLAlchemy
